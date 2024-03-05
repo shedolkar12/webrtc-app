@@ -1,12 +1,12 @@
 import React from 'react';
 import { useContext } from 'react';
-import { SocketContext } from '../providers/Socket';
+import { CounterContext } from '../providers/Counter';
 // import { SocketProvider } from './providers/Socket';
 
 export const CounterPage = () =>{
     console.log("Inside Counter Page")
-    const counterState = useContext(SocketContext);
-    // console.log("counterState", counterState);
+    const counterState = useContext(CounterContext);
+    console.log("counterState", counterState);
     return (
         <div className='counter-container'>
             <div>
