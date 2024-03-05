@@ -26,7 +26,6 @@ io.on("connection", socket => {
         io.broadcast.to(RoomId).emit("Room:user:joined", {email})
     })
 
-
     socket.on("disconnect", ()=>{
         console.log(`user disconnected: ${socket.id}`);
         users.delete(socket.id);
