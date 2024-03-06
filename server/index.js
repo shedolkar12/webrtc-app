@@ -6,7 +6,9 @@ const path = require("path")
 app = express()
 port = 3001
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: true
+});
 
 const EmailRoomSocketMapping = new Map()
 
@@ -16,19 +18,19 @@ app.get("/", (req, res)=>{
 })
 
 io.on("connection", socket => {
-    console.log(`user connected ${socket.id}`);
+    console.log(`user connected:  ${socket.id}`);
 
-    io.on("user:joined", data => {
-        const {email, RoomId} = data;
-        EmailRoomSocketMapping.set(email, RoomId);
-        console.log(`email: ${email}, RoomId: ${RoomId}`);
-        io.join(RoomId)
-        io.broadcast.to(RoomId).emit("Room:user:joined", {email})
+    socket.on("user:joined", data => {
+        const {email, roomId} = data;
+        EmailRoomSocketMapping.set(email, roomId);
+        console.log(`email: ${email}, RoomId: ${roomId}`);
+        socket.join(roomId)
+        socket.broadcast.to(roomId).emit("Room:user:joined", {email})
     })
 
     socket.on("disconnect", ()=>{
         console.log(`user disconnected: ${socket.id}`);
-        users.delete(socket.id);
+        // users.delete(socket.id);
         socket.emit("user:disconnect", socket.id);
     })
 });

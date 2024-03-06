@@ -2,7 +2,7 @@ import './App.css';
 import {Routes, Route, BrowserRouter} from 'react-router-dom'
 import HomePage from './pages/Home';
 import CounterPage from './pages/Counter';
-// import { SocketProvider } from './providers/Socket';
+import { SocketProvider } from './providers/Socket';
 // import { SocketContext } from './providers/Socket';
 import {CounterContextProvider} from './providers/Counter';
 function App() {
@@ -11,7 +11,9 @@ function App() {
     <BrowserRouter>
     <div>
       <div>
+      <SocketProvider>
         <Routes>
+          
           <Route path="/" element={<HomePage/>} />
           <Route path="/count" element={
             <div>
@@ -21,6 +23,7 @@ function App() {
             </div>
           }/>
         </Routes>
+        </SocketProvider>
 
       </div>
     </div>
