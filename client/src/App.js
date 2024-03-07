@@ -6,6 +6,8 @@ import CounterPage from './pages/Counter';
 import { SocketProvider } from './providers/Socket';
 // import { SocketContext } from './providers/Socket';
 import {CounterContextProvider} from './providers/Counter';
+import {PeerProvider} from './providers/Peer';
+
 function App() {
   // console.log("Socket Context:", SocketContext);
   return (
@@ -13,6 +15,7 @@ function App() {
     <div>
       <div>
       <SocketProvider>
+        <PeerProvider>
         <Routes>
           
           <Route path="/" element={<HomePage/>} />
@@ -25,6 +28,7 @@ function App() {
             </div>
           }/>
         </Routes>
+        </PeerProvider>
         </SocketProvider>
 
       </div>

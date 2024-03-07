@@ -10,7 +10,8 @@ const io = new Server(server, {
     cors: true
 });
 
-const EmailRoomSocketMapping = new Map()
+const EmailSocketMapping = new Map()
+const SocketEmailMapping = new Map()
 
 app.get("/", (req, res)=>{
     console.log("request path ", req.path);
@@ -22,11 +23,20 @@ io.on("connection", socket => {
 
     socket.on("user:join", data => {
         const {email, roomId} = data;
-        EmailRoomSocketMapping.set(email, roomId);
+        EmailSocketMapping.set(email, socket.id);
+        SocketEmailMapping.set(socket.id, email)
         console.log(`User Join the room email: ${email}, RoomId: ${roomId}`);
         socket.join(roomId);
         socket.emit("user:joined", {roomId, email});
         socket.broadcast.to(roomId).emit("Room:user:joined", {email});
+    })
+
+    socket.on("call-user", (data)=>{
+        const {emailId, offer} = data;
+        const socketId = EmailSocketMapping.get(emailId)
+        const fromEmail = SocketEmailMapping.get(socket.id)
+        socket.to(socketId).emit("incoming-call", {from: fromEmail, offer})
+
     })
 
     socket.on("disconnect", ()=>{
