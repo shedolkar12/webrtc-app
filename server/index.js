@@ -20,12 +20,13 @@ app.get("/", (req, res)=>{
 io.on("connection", socket => {
     console.log(`user connected:  ${socket.id}`);
 
-    socket.on("user:joined", data => {
+    socket.on("user:join", data => {
         const {email, roomId} = data;
         EmailRoomSocketMapping.set(email, roomId);
-        console.log(`email: ${email}, RoomId: ${roomId}`);
-        socket.join(roomId)
-        socket.broadcast.to(roomId).emit("Room:user:joined", {email})
+        console.log(`User Join the room email: ${email}, RoomId: ${roomId}`);
+        socket.join(roomId);
+        socket.emit("user:joined", {roomId, email});
+        socket.broadcast.to(roomId).emit("Room:user:joined", {email});
     })
 
     socket.on("disconnect", ()=>{
