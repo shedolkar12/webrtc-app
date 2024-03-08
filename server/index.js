@@ -23,6 +23,7 @@ io.on("connection", socket => {
 
     socket.on("user:join", data => {
         const {email, roomId} = data;
+        console.log("when user joins socket_id: ${socket.id}", socket.id);
         EmailSocketMapping.set(email, socket.id);
         SocketEmailMapping.set(socket.id, email)
         console.log(`User Join the room email: ${email}, RoomId: ${roomId}`);
@@ -32,9 +33,11 @@ io.on("connection", socket => {
     })
 
     socket.on("call-user", (data)=>{
+        console.log("on call-user....")
         const {emailId, offer} = data;
         const socketId = EmailSocketMapping.get(emailId)
         const fromEmail = SocketEmailMapping.get(socket.id)
+        console.log("Socket_id:", socketId)
         socket.to(socketId).emit("incoming-call", {from: fromEmail, offer})
 
     })

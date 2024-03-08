@@ -18,7 +18,7 @@ const RoomPage = () => {
     );
     
     const handleIncomingCall = useCallback(
-        async (data) => {
+        (data) => {
             console.log("Inside Incoming data")
             const {from, offer} = data;
             console.log("Incoming call.....", from, offer);
@@ -27,7 +27,12 @@ const RoomPage = () => {
 
     useEffect(() => {
         socket.on("Room:user:joined", handleNewUserJoined);
+        console.log("In useEffect before incoming call...")
         socket.on("incoming-call", handleIncomingCall);
+        return () => {
+            socket.off("Room:user:joined", handleNewUserJoined);
+            socket.off("incoming-call", handleIncomingCall);
+        }
     }, [handleNewUserJoined, handleIncomingCall, socket]);
     return (
         <div className="room-page-container">
