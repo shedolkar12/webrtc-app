@@ -1,12 +1,14 @@
 import React, { useCallback } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSocket } from "../providers/Socket";
 import { usePeer } from "../providers/Peer";
+import ReactPlayer from 'react-player'
 
 const RoomPage = () => {
     const { socket } = useSocket();
+    const [myStream, setMyStream] = useState(null);
     // const [roomUsers, setRoomUsers ]= useState([])
-    const { createOffer, creatAnswer, setRemoteAns } = usePeer();
+    const { createOffer, creatAnswer, setRemoteAns, sendStream, remoteStream } = usePeer();
     const handleNewUserJoined = useCallback(
         async (data) => {
             const { email } = data;
@@ -17,19 +19,19 @@ const RoomPage = () => {
         },
         [createOffer, socket]
     );
-    
+
     const handleIncomingCall = useCallback(
         async (data) => {
             console.log("Inside Incoming Call function")
-            const {emailOfA, offerOfA} = data;
+            const { emailOfA, offerOfA } = data;
             console.log("Incoming call.....", emailOfA, offerOfA);
             const answerOfB = await creatAnswer(offerOfA)
-            socket.emit("call-accepted-acknowledgement", {emailOfA, answerOfB})
+            socket.emit("call-accepted-acknowledgement", { emailOfA, answerOfB })
         }, [creatAnswer, socket]
     )
 
-    const handleCallAccepted = useCallback(async (data)=>{
-        const {answerOfB} = data;
+    const handleCallAccepted = useCallback(async (data) => {
+        const { answerOfB } = data;
         console.log("call has been accepted by: ", answerOfB);
         await setRemoteAns(answerOfB);
     }, [setRemoteAns]);
@@ -44,12 +46,32 @@ const RoomPage = () => {
             socket.off("call-accepted-by-B", handleCallAccepted);
         }
     }, [handleNewUserJoined, handleIncomingCall, handleCallAccepted, socket]);
+
+    const getUserMediaStream = useCallback(async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: true, 
+            video: true 
+        });
+        
+        setMyStream(stream);
+
+    }, [sendStream])
+
+    useEffect(() => {
+        getUserMediaStream()
+    }, [getUserMediaStream])
     return (
         <div className="room-page-container">
             I am on room Page
             <ul>
                 <li></li>
             </ul>
+            <ReactPlayer url={myStream} playing muted />
+            <button onClick={(e) => sendStream(myStream)}>Send my Video</button>
+            <div>
+                <h1>Remote Video</h1>
+                <ReactPlayer url={remoteStream} playing muted />
+            </div>
         </div>
     );
 };
