@@ -21,7 +21,7 @@ app.get("/", (req, res)=>{
 io.on("connection", socket => {
     console.log(`user connected:  ${socket.id}`);
 
-    socket.on("user:join", data => {
+    socket.on("new-user-wanted-to-join", data => {
         const {email, roomId} = data;
         console.log("when user joins socket_id: ${socket.id}", socket.id);
         EmailSocketMapping.set(email, socket.id);
@@ -32,14 +32,22 @@ io.on("connection", socket => {
         socket.broadcast.to(roomId).emit("Room:user:joined", {email});
     })
 
-    socket.on("call-user", (data)=>{
+    socket.on("call-user-from-A", (data)=>{
         console.log("on call-user....")
-        const {emailId, offer} = data;
-        const socketId = EmailSocketMapping.get(emailId)
-        const fromEmail = SocketEmailMapping.get(socket.id)
-        console.log("Socket_id:", socketId)
-        socket.to(socketId).emit("incoming-call", {from: fromEmail, offer})
+        const {emailOfB, offerOfA} = data;
+        console.log("emailId while calling:", emailOfB);
+        const socketIdOfB = EmailSocketMapping.get(emailOfB)
+        const emailOfA = SocketEmailMapping.get(socket.id)
+        console.log("Socket_id:", socketIdOfB)
+        socket.to(socketIdOfB).emit("incoming-call-from-A", {emailOfA, offerOfA})
+    })
 
+    socket.on("call-accepted-acknowledgement", (data)=>{
+        const {emailOfA, answerOfB} = data;
+        const socketIdOfA = EmailSocketMapping.get(emailOfA)
+        console.log("COMPARE: ", socket.id, socketIdOfA)
+        socket.to(socketIdOfA).emit("call-accepted-by-B", {answerOfB})
+        
     })
 
     socket.on("disconnect", ()=>{
