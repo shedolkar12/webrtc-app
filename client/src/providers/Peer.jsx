@@ -37,21 +37,31 @@ export const PeerProvider = (props) => {
     }
 
     const sendStream = async (stream) => {
+        console.log("inside send stream to the remote");
         const tracks = await stream.getTracks()
+
         for (const track of tracks){
+            console.log("track: ", track);
             peer.addTrack(track, stream);
         }
     }
     const handleTrackEvent = useCallback((ev) => {
+        console.log("Inside handle track event");
         const streams = ev.streams;
+        console.log(streams);
         setRemoteStream(streams[0])
     }, [])
+    // const handleNegotiationneeded = useCallback(()=>{
+    //     console.log("Negotiation Needed!!!")
+    // }, [])
     useEffect(()=>{
         peer.addEventListener('track', handleTrackEvent);
+        // peer.addEventListener('negotiationneeded', handleNegotiationneeded)
         return () => {
             peer.removeEventListener('track', handleTrackEvent);
+            // peer.removeEventListener('negotiationneeded', handleNegotiationneeded)
         }
-    }, [peer])
+    }, [handleTrackEvent, peer])
 
     return (
         <PeerContext.Provider value={{peer, createOffer, creatAnswer, setRemoteAns, sendStream, remoteStream}}>
