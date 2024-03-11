@@ -27,9 +27,11 @@ export const PeerProvider = (props) => {
     }
 
     const creatAnswer = async (offer) => {
+        console.log("Inside ceateAnswer")
         await peer.setRemoteDescription(offer)
         const answer = await peer.createAnswer()
         await peer.setLocalDescription(answer);
+        console.log(answer)
         return answer;
     }
     const setRemoteAns = async (ans) => {
