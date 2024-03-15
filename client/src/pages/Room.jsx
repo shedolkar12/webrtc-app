@@ -45,6 +45,7 @@ const RoomPage = () => {
         const { answerOfB } = data;
         console.log("call has been accepted by: ", remoteEmailId, answerOfB);
         await setRemoteAns(answerOfB);
+        console.log("post await....");
     }, [setRemoteAns]);
 
     const handleNegotiationneeded = useCallback(()=>{
