@@ -16,6 +16,7 @@ io.on("connection", (socket)=>{
     users.set(socket.id, socket.id)
     // socket.on("connect", (socket)=>{
     socket.broadcast.emit("users:joined", socket.id)
+    console.log("socket_id: ", socket.id);
     socket.emit('hello', {id: socket.id});
     
     socket.on("outgoing:call", data => {
