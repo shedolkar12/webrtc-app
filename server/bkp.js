@@ -22,7 +22,7 @@ io.on("connection", (socket)=>{
     socket.on("outgoing:call", data => {
         console.log("data: ");
         const {fromOffer, to} = data;
-        console.log("fromOffer, to", fromOffer, to, "socket_id: outgoing:call", socket.id);
+        // console.log("fromOffer, to", fromOffer, to, "socket_id: outgoing:call", socket.id);
         socket.to(to).emit('incoming:call', { from: socket.id, offer: fromOffer });
 
     })
