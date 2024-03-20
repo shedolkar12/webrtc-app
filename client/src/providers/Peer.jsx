@@ -22,6 +22,7 @@ export const PeerProvider = (props) => {
         const offer = await peer.createOffer()
         // This description specifies the properties of the local end of the connection, 
         // including the media format.
+        console.log("CreateOffer: ", offer)
         await peer.setLocalDescription(offer)
         return offer;
     }
